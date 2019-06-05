@@ -27,6 +27,10 @@ local players = require (wolfa_getLuaPath()..".players.players")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
+local stats = require (wolfa_getLuaPath()..".players.stats")
+
+local admin = require (wolfa_getLuaPath()..".admin.admin")
+
 function commandWarn(clientId, command, victim, ...)
     local cmdClient
 
@@ -88,10 +92,38 @@ function commandWarn(clientId, command, victim, ...)
     end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..cmdClient.." \"^7You have been warned by "..players.getName(clientId)..": ^7"..reason..".\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned.\";")
+--    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned.\";")
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/misc/referee.wav\";")
 
-    return true
+	local warncount 
+	local maxwarns
+	local warnremains
+
+	maxwarns = 4
+
+	if tonumber(stats.get(cmdClient, "warncount")) == nil or tonumber(stats.get(cmdClient, "warncount")) == 0 then
+		warncount = 1
+	else
+		warncount = tonumber(stats.get(cmdClient, "warncount"))
+	end
+			
+	if warncount == maxwarns then
+		et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^1Player auto-kicked: ^7"..players.getName(cmdClient).." ^1because of several warnings...\";")
+		admin.kickPlayer(cmdClient, clientId, reason)
+		if settings.get("g_playerHistory") ~= 0 then
+			history.add(cmdClient, clientId, "auto-kick", reason)
+		end
+		return true
+	end
+	
+	warnremains = 0
+	warnremains = maxwarns - warncount
+	
+	et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned and "..warnremains.." warning(s) remaining to auto-kick \";")
+	warncount = warncount + 1
+	stats.set(cmdClient, "warncount", warncount)
+
+
 end
 commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", nil, (settings.get("g_standalone") == 0))

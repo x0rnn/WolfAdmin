@@ -58,7 +58,7 @@ function commandBan(clientId, command, victim, ...)
         duration = util.getTimeFromString(args[1])
         reason = "banned by admin"
     elseif args[1] then
-        duration = 600
+        duration = util.getTimeFromString("1y")
         reason = table.concat(args, " ")
     elseif not auth.isPlayerAllowed(clientId, "8") then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dban usage: "..commands.getadmin("ban")["syntax"].."\";")
