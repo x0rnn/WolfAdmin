@@ -23,6 +23,11 @@ local players = require (wolfa_getLuaPath()..".players.players")
 
 local settings = require (wolfa_getLuaPath()..".util.settings")
 
+local db = require (wolfa_getLuaPath()..".db.db")
+local pagination = require (wolfa_getLuaPath()..".util.pagination")
+local util = require (wolfa_getLuaPath()..".util.util")
+
+
 function commandFinger(clientId, command, victim)
     local cmdClient
 
@@ -62,6 +67,28 @@ function commandFinger(clientId, command, victim)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dGUID:    ^2"..stats["guid"].."\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dIP:      ^2"..stats["ip"].."\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dVersion: ^2"..stats["version"].."\";")
+
+	if not db.isConnected() then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dlistaliases: ^9alias history is disabled.\";")   
+    return true
+	end
+
+	local player = db.getPlayer(players.getGUID(cmdClient))["id"]
+    
+    local count = db.getAliasesCount(player)
+    local limit, offset = pagination.calculate(count, 30, tonumber(offset))
+    local aliases = db.getAliases(player, limit, offset)
+    
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dAliases for ^7"..et.gentity_get(cmdClient, "pers.netname").."^d:\";")
+    for _, alias in pairs(aliases) do
+        local numberOfSpaces = 24 - string.len(util.removeColors(alias["alias"]))
+        local spaces = string.rep(" ", numberOfSpaces)
+        
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^7"..spaces..alias["alias"].." ^7"..string.format("%8s", alias["used"]).." times\";")
+    end
+    
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dlistaliases: ^9aliases for ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9were printed to the console.\";")
 
     return true
 end
