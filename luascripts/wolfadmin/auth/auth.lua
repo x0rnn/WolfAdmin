@@ -51,7 +51,6 @@ auth.PERM_TMADVERT = "join"
 auth.PERM_TMADVERT = "forum"
 auth.PERM_TMADVERT = "recruit"
 
-auth.PERM_GUIDINFO = "guidinfo"
 auth.PERM_SEARCHPLAYER = "searchplayer"
 
 auth.PERM_PUT = "put"

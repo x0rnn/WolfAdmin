@@ -59,4 +59,4 @@ function commandListPlayersByNickname(clientId, command, victim, offset)
 
     return true
 end
-commands.addadmin("searchplayer", commandListPlayersByNickname, auth.PERM_GUIDINFO, "display history for a specific player nickname", "^9[^3nickname^9] ^9(^hoffset^9)", (settings.get("g_playerHistory") == 0))
+commands.addadmin("searchplayer", commandListPlayersByNickname, auth.PERM_SEARCHPLAYER, "display history for a specific player nickname", "^9[^3nickname^9] ^9(^hoffset^9)", (settings.get("g_playerHistory") == 0))

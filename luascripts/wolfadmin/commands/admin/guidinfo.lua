@@ -69,4 +69,4 @@ function commandListPlayerByGUID(clientId, command, victim, offset)
 
     return true
 end
-commands.addadmin("guidinfo", commandListPlayerByGUID, auth.PERM_GUIDINFO, "display history for a specific player", "^9[^3GUID^9] ^9(^hoffset^9)", (settings.get("g_playerHistory") == 0))
+commands.addadmin("guidinfo", commandListPlayerByGUID, auth.PERM_SEARCHPLAYER, "display history for a specific player", "^9[^3GUID^9] ^9(^hoffset^9)", (settings.get("g_playerHistory") == 0))
