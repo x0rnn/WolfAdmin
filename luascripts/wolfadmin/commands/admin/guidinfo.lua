@@ -1,4 +1,21 @@
 
+-- WolfAdmin module for Wolfenstein: Enemy Territory servers.
+-- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- and extended by EAGLE_CZ, www.teammuppet.com
+
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- at your option any later version.
+
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 local auth = require (wolfa_getLuaPath()..".auth.auth")
 local history = require (wolfa_getLuaPath()..".admin.history")
 local db = require (wolfa_getLuaPath()..".db.db")
@@ -15,20 +32,17 @@ function commandListPlayerByGUID(clientId, command, victim, offset)
 
         return true
     elseif victim == nil then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowguid usage: !showguid [GUID] [offset/page]\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dguidinfo usage: !guidinfo [GUID] [offset/page]\";")
 
         return true
     else
         cmdClient = victim
     end
-
-	et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^muheeeee "..victim..".\";")
-
-	--playerGUID = {} 
+ 
 	playerGUID = db.getPlayer(victim)
 	
 	if not (playerGUID) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dshowguid: ^9there is no history for selected player GUID ^7"..victim.."^9.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dguidinfo: ^9there is no history for selected player GUID ^7"..victim.."^9.\";")
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dDetails for GUID: ^7"..victim.."^d:\";")
 		et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dPlayer DB ID: ^1"..string.format("%4s", playerGUID["id"]).."^9 (this number you will need for offline BAN and so)\";")
@@ -50,9 +64,9 @@ function commandListPlayerByGUID(clientId, command, victim, offset)
 			et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^7"..spaces..alias["alias"].." ^7"..string.format("%8s", alias["used"]).." times\";")
 		end
 		et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Showing aliases results ^7"..(offset + 1).." ^9- ^7"..(offset + limit).." ^9of ^7"..count.."^9.\";")
-		et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dshowguid: ^9history for GUID ^7"..victim.." ^9was printed to the console.\";")
+		et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^dguidinfo: ^9history for GUID ^7"..victim.." ^9was printed to the console.\";")
     end
 
     return true
 end
-commands.addadmin("showguid", commandListPlayerByGUID, auth.PERM_SHOWGUID, "display history for a specific player", "^9[^3GUID^9] ^9(^hoffset^9)", (settings.get("g_playerHistory") == 0))
+commands.addadmin("guidinfo", commandListPlayerByGUID, auth.PERM_GUIDINFO, "display history for a specific player", "^9[^3GUID^9] ^9(^hoffset^9)", (settings.get("g_playerHistory") == 0))

@@ -51,6 +51,9 @@ auth.PERM_TMADVERT = "join"
 auth.PERM_TMADVERT = "forum"
 auth.PERM_TMADVERT = "recruit"
 
+auth.PERM_GUIDINFO = "guidinfo"
+auth.PERM_SEARCHPLAYER = "searchplayer"
+
 auth.PERM_PUT = "put"
 auth.PERM_DROPWEAPONS = "dropweapons"
 auth.PERM_RENAME = "rename"
@@ -118,7 +121,6 @@ auth.PERM_SILENTCMDS = "silentcmds"
 auth.PERM_SPY = "spy"
 auth.PERM_INCOGNITO = "incognito"
 auth.PERM_IMMUNE = "immune"
-auth.PERM_SHOWGUID = "showguid"
 
 -- as this module serves as a wrapper/super class, we load the selected database
 -- system in this function. might have to think of a better way to implement

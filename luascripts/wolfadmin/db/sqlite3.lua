@@ -272,6 +272,36 @@ function sqlite3.getAliasByName(playerid, aliasname)
     return alias
 end
 
+function sqlite3.getAliasByNickname(nickname,limit,offset)
+
+    
+    limit = limit or 30
+    offset = offset or 0
+	
+	cur = assert(con:execute("SELECT * FROM `alias` WHERE `cleanalias` like '%"..util.escape(nickname).."%' LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+	
+    local aliasesByNickname = {}
+    local row = cur:fetch({}, "a")
+    
+    while row do
+        table.insert(aliasesByNickname, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+    
+    return aliasesByNickname
+end
+
+function sqlite3.getAliasByNicknameCount(nickname)
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `alias` WHERE `cleanalias` like '%"..util.escape(nickname).."%'"))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
 function sqlite3.getLastAlias(playerid)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
     
