@@ -24,7 +24,7 @@ qsay - server say
 
 function jointm()
     
-	message = "TeamMuppet is recruiting! Ask recruiters or visit www.teammuppet.eu!"
+	message = "TeamMuppet is recruiting! Ask recruiters or visit www.teammuppet.com!"
 	et.trap_SendServerCommand( -1 , string.format('%s \"%s\"',location,message ))
 
     return true
@@ -32,7 +32,7 @@ end
 
 function tmforum()
     
-	message = "Visit www.teammuppet.eu! Be a part of our community. Share your opinions and suggestions!"
+	message = "Visit www.teammuppet.com! Be a part of our community. Share your opinions and suggestions!"
 	et.trap_SendServerCommand( -1 , string.format('%s \"%s\"',location,message ))
 
     return true
