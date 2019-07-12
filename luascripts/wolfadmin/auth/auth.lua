@@ -118,6 +118,7 @@ auth.PERM_SILENTCMDS = "silentcmds"
 auth.PERM_SPY = "spy"
 auth.PERM_INCOGNITO = "incognito"
 auth.PERM_IMMUNE = "immune"
+auth.PERM_SHOWGUID = "showguid"
 
 -- as this module serves as a wrapper/super class, we load the selected database
 -- system in this function. might have to think of a better way to implement
