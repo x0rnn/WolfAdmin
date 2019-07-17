@@ -36,7 +36,7 @@ function commandClanChat(clientId, command, ...)
         end
         
         for _, recipient in ipairs(recipients) do
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> clanchat ("..#recipients.." recipients): ^7"..table.concat({...}, " ").."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..recipient.." \"^7"..et.gentity_get(clientId, "pers.netname").."^7 -> clanchat ("..#recipients.." recipients): ^O"..table.concat({...}, " ").."\";")
             et.trap_SendServerCommand(recipient, "cp \"^jclanchat message from ^7"..et.gentity_get(clientId, "pers.netname"))
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..recipient.." \"sound/misc/pm.wav\";")
         end

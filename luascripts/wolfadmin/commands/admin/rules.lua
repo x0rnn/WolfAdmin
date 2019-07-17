@@ -1,6 +1,7 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
 -- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- and extended by EAGLE_CZ, www.teammuppet.com
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@ function commandRules(clientId, command, rule)
         local list = rules.get()
         
         for shortcut, rule in pairs(list) do
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%8s", shortcut).." ^9- "..rule.."\";")
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..string.format("%12s", shortcut).." ^9- "..rule.."\";")
             
             amountOfRules = amountOfRules + 1
         end
@@ -34,11 +35,17 @@ function commandRules(clientId, command, rule)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \"^drules: ^9"..amountOfRules.." rules (open console for the full list)\";")
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Type ^2!rules ^d[rule] ^9to announce a specific rule.\";")
     else
-        local rule = rules.get(string.lower(rule))
-        
-        if rule then
-            et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drules: "..rules.get(string.lower(cmdArguments[1])).."\";")
-        end
+		
+		if rules.get(string.lower(rule)) then
+ 
+			if rule then
+				et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drules: "..rules.get(string.lower(rule)).."\";")
+			end
+		else
+		
+		et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9No rule found by [rule] you have specified. Type ^2!rules ^d[rule] ^9to announce a specific rule.\";")
+		return true
+		end
     end
     
     return true

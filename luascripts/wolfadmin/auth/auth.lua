@@ -52,6 +52,7 @@ auth.PERM_TMADVERT = "forum"
 auth.PERM_TMADVERT = "recruit"
 
 auth.PERM_SEARCHPLAYER = "searchplayer"
+auth.PERM_FREEZE = "freeze"
 
 auth.PERM_PUT = "put"
 auth.PERM_DROPWEAPONS = "dropweapons"

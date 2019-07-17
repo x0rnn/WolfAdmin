@@ -1,6 +1,7 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
 -- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- and extended by EAGLE_CZ, www.teammuppet.com
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@ function commandHelp(clientId, command, cmd)
         for command, data in pairs(cmds) do
             if data["function"] and data["flag"] and auth.isPlayerAllowed(clientId, data["flag"]) and not data["hidden"] then
                 table.insert(availableCommands, command)
+				table.sort( availableCommands)
+
             end
         end
         
@@ -36,7 +39,7 @@ function commandHelp(clientId, command, cmd)
         local cmdsOnLine, cmdsBuffer = 0, ""
         
         for _, command in pairs(availableCommands) do
-            cmdsBuffer = cmdsBuffer ~= "" and cmdsBuffer..string.format("%-12s", command) or string.format("%-12s", command)
+            cmdsBuffer = cmdsBuffer ~= "" and cmdsBuffer..string.format("%-15s", command) or string.format("%-15s", command)
             cmdsOnLine = cmdsOnLine + 1
                 
             if cmdsOnLine == 6 then
