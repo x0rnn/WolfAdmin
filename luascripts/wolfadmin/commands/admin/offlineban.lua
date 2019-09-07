@@ -54,21 +54,14 @@ function commandOfflineBan(clientId, command, victim, ...)
     elseif args[1] then
         duration = util.getTimeFromString("1y")
         reason = table.concat(args, " ")
-    --[[
-	elseif not auth.isPlayerAllowed(clientId, "8") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dofflineban usage: "..commands.getadmin("offlineban")["syntax"].."\";")
-        
-        return true
-	]]--
+    
     end
-	--sqlite3.getPlayerId(clientId)
+	
 	invokerId = db.getPlayerId(clientId)
+	invokerName = db.getAliases(invokerId, 1, 0)
+	victimName = db.getAliases(victim, 1, 0)
 
-	local count = db.getHistoryCount(victim)
-	local limit, offset = pagination.calculate(count, 30, tonumber(offset))
-	local playerHistory = db.getHistory(victim, limit, offset)
-
-	if not (playerHistory and #playerHistory > 0) then
+	if not (victimName) then
 		et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dofflineban: ^9Cannot find DB Player ID ^1"..victim.."^d in the database!.\";")
 		et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dTip: if you dont know, how to get DB Player ID, try command ^1!searchplayer [nickname]\";")
 	return true

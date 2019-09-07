@@ -32,7 +32,22 @@ function admin.putPlayer(clientId, teamId)
 end
 
 function admin.kickPlayer(victimId, invokerId, reason)
+
+	if tonumber(et.trap_Cvar_Get("g_autoTempBanTime")) then
+			TempBanTime = tonumber(et.trap_Cvar_Get("g_autoTempBanTime"))
+	else
+			-- time in seconds 
+			TempBanTime = 900
+	end
+
+    local victimPlayerId = db.getPlayer(players.getGUID(victimId))["id"]
+    local invokerPlayerId = db.getPlayer(players.getGUID(invokerId))["id"]
+
+	ban_desc = "You have been kicked, Reason: "..(reason and reason or "kicked by admin")
+    db.addBan(victimPlayerId, invokerPlayerId, os.time(), TempBanTime, ban_desc)
+
     et.trap_DropClient(victimId, "You have been kicked, Reason: "..(reason and reason or "kicked by admin"), 0)
+	
 end
 
 function admin.setPlayerLevel(clientId, level)
