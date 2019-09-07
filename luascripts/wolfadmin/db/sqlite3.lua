@@ -94,6 +94,15 @@ function sqlite3.getPlayer(guid)
     return player
 end
 
+function sqlite3.getPlayerByID(DBID)
+    cur = assert(con:execute("SELECT * FROM `player` WHERE `id`='"..util.escape(DBID).."'"))
+    
+    local player = cur:fetch({}, "a")
+    cur:close()
+    
+    return player
+end
+
 -- levels
 function sqlite3.addLevel(id, name)
     cur = assert(con:execute("INSERT INTO `level` (`id`, `name`) VALUES ('"..tonumber(id).."', '"..util.escape(name).."')"))
