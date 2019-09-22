@@ -27,6 +27,7 @@ local srv
 auth.PERM_ADMINTEST = "admintest"
 auth.PERM_HELP = "help"
 auth.PERM_TIME = "time"
+auth.PERM_UPTIME = "uptime"
 auth.PERM_GREETING = "greeting"
 
 auth.PERM_LISTPLAYERS = "listplayers"
