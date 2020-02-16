@@ -15,14 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local constants = wolfa_requireModule("util.constants")
+local settings = wolfa_requireModule("util.settings")
 
 function commandSlap(clientId, command, victim)
     local cmdClient
@@ -74,6 +74,7 @@ function commandSlap(clientId, command, victim)
     et.gentity_set(cmdClient, "health", newHealth)
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dslap: ^7"..players.getName(cmdClient).." ^9was slapped.\";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound "..cmdClient.." \"sound/player/land_hurt.wav\";")
 
     return true
 end

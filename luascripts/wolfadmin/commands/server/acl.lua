@@ -15,13 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local acl = require (wolfa_getLuaPath()..".auth.acl")
+local acl = wolfa_requireModule("auth.acl")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local settings = wolfa_requireModule("util.settings")
 
 function commandAclListLevels()
     for _, level in ipairs(acl.getLevels()) do
@@ -161,15 +161,23 @@ function commandAclCopyLevelPermissions(levelId, newLevelId)
         return true
     end
 
-    if #acl.getLevelPermissions(newLevelId) ~= 0 then
-        et.G_Print("error: level "..newLevelId.." already has permissions\n")
+    acl.copyLevelPermissions(levelId, newLevelId)
+
+    et.G_Print("copied permissions from "..levelId.." to "..newLevelId.."\n")
+end
+
+function commandAclRemoveLevelPermissions(levelId)
+    local levelId = tonumber(levelId)
+
+    if not levelId or not acl.isLevel(levelId) then
+        et.G_Print("usage: acl removepermissions [id]\n")
 
         return true
     end
 
-    acl.copyLevelPermissions(levelId, newLevelId)
+    acl.removeLevelPermissions(levelId)
 
-    et.G_Print("copied permissions from "..levelId.." to "..newLevelId.."\n")
+    et.G_Print("removed permissions from "..levelId.."\n")
 end
 
 function commandAcl(command, action, ...)
@@ -191,8 +199,10 @@ function commandAcl(command, action, ...)
         return commandAclRemoveLevelPermission(...)
     elseif action == "copypermissions" then
         return commandAclCopyLevelPermissions(...)
+    elseif action == "removepermissions" then
+        return commandAclRemoveLevelPermissions(...)
     else
-        et.G_Print("usage: acl [listlevels|addlevel|removelevel|relevel|listpermissions|isallowed|addpermission|removepermission|copypermissions]")
+        et.G_Print("usage: acl [listlevels|addlevel|removelevel|relevel|listpermissions|isallowed|addpermission|removepermission|copypermissions|removepermissions]")
     end
     
     return true

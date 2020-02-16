@@ -15,10 +15,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
 
 local auth = {}
 
@@ -97,6 +97,7 @@ auth.PERM_NEWS = "news"
 
 auth.PERM_UPTIME = "uptime"
 auth.PERM_SETLEVEL = "setlevel"
+auth.PERM_INCOGNITO = "incognito"
 auth.PERM_READCONFIG = "readconfig"
 
 auth.PERM_CRAZYSETTINGS = "crazysettings"
@@ -114,13 +115,13 @@ auth.PERM_NOCENSOR = "nocensor"
 auth.PERM_NOBALANCE = "nobalance"
 auth.PERM_NOVOTELIMIT = "novotelimit"
 auth.PERM_NOREASON = "noreason"
+auth.PERM_NOAKA = "noaka"
 auth.PERM_PERMA = "perma"
 
 auth.PERM_TEAMCMDS = "teamcmds"
 auth.PERM_SILENTCMDS = "silentcmds"
 
 auth.PERM_SPY = "spy"
-auth.PERM_INCOGNITO = "incognito"
 auth.PERM_IMMUNE = "immune"
 
 -- as this module serves as a wrapper/super class, we load the selected database
@@ -139,11 +140,11 @@ function auth.onGameInit()
             return
         end
 
-        srv = require (wolfa_getLuaPath()..".auth.acl")
+        srv = wolfa_requireModule("auth.acl")
 
         srv.readPermissions()
     else
-        srv = require (wolfa_getLuaPath()..".auth.shrubbot")
+        srv = wolfa_requireModule("auth.shrubbot")
 
         srv.loadFlags(et.trap_Cvar_Get("fs_game"))
     end

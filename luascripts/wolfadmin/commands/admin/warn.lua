@@ -15,21 +15,21 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local history = require (wolfa_getLuaPath()..".admin.history")
+local history = wolfa_requireModule("admin.history")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local settings = wolfa_requireModule("util.settings")
 
-local stats = require (wolfa_getLuaPath()..".players.stats")
+local stats = wolfa_requireModule("players.stats")
 
-local admin = require (wolfa_getLuaPath()..".admin.admin")
+local admin = wolfa_requireModule("admin.admin")
 
 function commandWarn(clientId, command, victim, ...)
     local cmdClient
@@ -124,6 +124,6 @@ function commandWarn(clientId, command, victim, ...)
 	warncount = warncount + 1
 	stats.set(cmdClient, "warncount", warncount)
 
-
+	return true
 end
 commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", nil, (settings.get("g_standalone") == 0))

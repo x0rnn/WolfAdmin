@@ -16,13 +16,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local history = require (wolfa_getLuaPath()..".admin.history")
-local db = require (wolfa_getLuaPath()..".db.db")
-local commands = require (wolfa_getLuaPath()..".commands.commands")
-local util = require (wolfa_getLuaPath()..".util.util")
-local pagination = require (wolfa_getLuaPath()..".util.pagination")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local auth = wolfa_requireModule("auth.auth")
+local history = wolfa_requireModule("admin.history")
+local db = wolfa_requireModule("db.db")
+local commands = wolfa_requireModule("commands.commands")
+local util = wolfa_requireModule("util.util")
+local pagination = wolfa_requireModule("util.pagination")
+local settings = wolfa_requireModule("util.settings")
 
 function commandListPlayerByGUID(clientId, command, victim, offset)
     local cmdClient

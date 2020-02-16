@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local logs = require (wolfa_getLuaPath()..".util.logs")
-local settings = require (wolfa_getLuaPath()..".util.settings")
+local logs = wolfa_requireModule("util.logs")
+local settings = wolfa_requireModule("util.settings")
 
 local types = {
     ["say"] = "chat",
@@ -39,7 +39,9 @@ function commandSay(clientId, command, ...)
         return true
     end
 
-    logs.writeChat(clientId, types[command], ...)
+    if settings.get("fs_game") == "legacy" then
+        logs.writeChat(clientId, types[command], ...)
+    end
 end
 commands.addclient("say", commandSay, "", "", false, (settings.get("g_standalone") == 0))
 commands.addclient("say_team", commandSay, "", "", false, (settings.get("g_standalone") == 0))

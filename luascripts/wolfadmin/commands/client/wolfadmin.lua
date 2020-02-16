@@ -15,13 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
 function commandWolfAdmin(clientId, command)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3This server is running ^7Wolf^1Admin ^7"..wolfa_getVersion().." ^3("..wolfa_getRelease().."^3)\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3Created by ^7Timo '^aTimo^qthy^7' ^7Smit and extended by ^0<=^3TM^0=>^3EAGLE_CZ. More info on\";")
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"    ^7https://dev.timosmit.com/wolfadmin/ or send message to ^0<=^3TM^0=>^3EAGLE_CZ at ^7https://www.teammupet.com \";")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"    ^7https://dev.timosmit.com/wolfadmin/ or send message to ^0<=^3TM^0=>^3EAGLE_CZ at ^7https://www.teammuppet.com \";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^3Thanks for using!\";")
     

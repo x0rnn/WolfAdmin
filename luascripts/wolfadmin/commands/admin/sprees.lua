@@ -15,13 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
+local auth = wolfa_requireModule("auth.auth")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
+local commands = wolfa_requireModule("commands.commands")
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local sprees = require (wolfa_getLuaPath()..".game.sprees")
+local sprees = wolfa_requireModule("game.sprees")
 
 function commandShowSprees(clientId, command)
     if not db.isConnected() then
@@ -35,7 +35,7 @@ function commandShowSprees(clientId, command)
     if #records == 0 then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dsprees: ^9there are no records for this map yet.\"")
     else
-        for i = 0, sprees.RECORD_NUM - 1 do
+        for i = 0, sprees.TYPE_NUM - 1 do
             if records[i] and records[i]["record"] > 0 then
                 et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dsprees: ^9longest "..sprees.getRecordNameByType(i).." spree (^7"..records[i]["record"].."^9) by ^7"..db.getLastAlias(records[i]["player"])["alias"].."^9.\";")
             end

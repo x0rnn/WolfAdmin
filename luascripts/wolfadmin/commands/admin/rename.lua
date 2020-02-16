@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2017 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,29 +15,22 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local admin = require (wolfa_getLuaPath()..".admin.admin")
+local auth = wolfa_requireModule("auth.auth")
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
-local db = require (wolfa_getLuaPath()..".db.db")
+local commands = wolfa_requireModule("commands.commands")
+local history = wolfa_requireModule("admin.history")
+local players = wolfa_requireModule("players.players")
 
-local history = require (wolfa_getLuaPath()..".admin.history")
+local settings = wolfa_requireModule("util.settings")
 
-local players = require (wolfa_getLuaPath()..".players.players")
-
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local util = require (wolfa_getLuaPath()..".util.util")
-
-function commandRename(clientId, command, victim, newNickName)
+function commandRename(clientId, command, victim, newName)
     local cmdClient
 
-    if victim == nil or newNickName == nill then
+    if victim == nil or newName == nil then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^drename usage: "..commands.getadmin("rename")["syntax"].."\";")
 
         return true
-    
-	elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
+    elseif tonumber(victim) == nil or tonumber(victim) < 0 or tonumber(victim) > tonumber(et.trap_Cvar_Get("sv_maxclients")) then
         cmdClient = et.ClientNumberFromString(victim)
     else
         cmdClient = tonumber(victim)
@@ -53,33 +46,20 @@ function commandRename(clientId, command, victim, newNickName)
         return true
     end
 
-    if auth.isPlayerAllowed(cmdClient, "!") then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^drename: ^7"..et.gentity_get(cmdClient, "pers.netname").." ^9is immune to this command.\";")
+    local oldName = players.getName(cmdClient)
 
-        return true
-    elseif auth.getPlayerLevel(cmdClient) > auth.getPlayerLevel(clientId) then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^drename: ^9sorry, but your intended victim has a higher admin level than you do.\";")
+    local clientInfo = et.trap_GetUserinfo(cmdClient)
+    clientInfo = et.Info_SetValueForKey(clientInfo, "name", newName)
+    et.trap_SetUserinfo(cmdClient, clientInfo)
+    et.ClientUserinfoChanged(cmdClient)
 
-    end
-
-    local oldNickName = et.gentity_get(cmdClient, "pers.netname")
-		
-		local name = et.gentity_get(cmdClient,"pers.netname")
-		local userinfo = et.trap_GetUserinfo(cmdClient)
-		
-		userinfo = et.Info_SetValueForKey(userinfo, "name", newNickName)
-		et.trap_SetUserinfo(cmdClient, userinfo)
-		et.ClientUserinfoChanged(cmdClient)	
-	
-	
-    if settings.get("g_playerHistory") ~= 0 then
-		reason = "from: "..util.removeColors(oldNickName).." to: "..util.removeColors(newNickName)
+	if settings.get("g_playerHistory") ~= 0 then
+		reason = "from: "..util.removeColors(oldName).." to: "..util.removeColors(newName)
         history.add(cmdClient, clientId, "rename", reason)
     end
-
-	et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^drename: ^9Player ^7"..oldNickName.."^9 was renamed to "..newNickName.." \";")
-    --et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drename: ^7"..players.getName(oldNickName).." ^9was renamed by admin.\";")
+    
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^drename: ^7"..oldName.." ^9has been renamed to ^7"..newName.."^9.\";")
 
     return true
 end
-commands.addadmin("rename", commandRename, auth.PERM_RENAME, "rename a player", "^9[^3name|slot#^9] ^9[^3newname^9]", nil, (settings.get("g_standalone") == 0))
+commands.addadmin("rename", commandRename, auth.PERM_RENAME, "renames a player", "^9[^3name|slot#^9] [^3new name^9]", nil, (settings.get("g_standalone") == 0))

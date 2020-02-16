@@ -15,12 +15,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local constants = require (wolfa_getLuaPath()..".util.constants")
-local util = require (wolfa_getLuaPath()..".util.util")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local tables = require (wolfa_getLuaPath()..".util.tables")
+local constants = wolfa_requireModule("util.constants")
+local util = wolfa_requireModule("util.util")
+local settings = wolfa_requireModule("util.settings")
+local tables = wolfa_requireModule("util.tables")
 
 local luasql = require "luasql.sqlite3"
 
@@ -187,7 +187,7 @@ function sqlite3.removeLevelPermission(levelId, permission)
 end
 
 function sqlite3.copyLevelPermissions(levelId, newLevelId)
-    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT '"..tonumber(newLevelId).."' AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId)))
+    cur = assert(con:execute("INSERT INTO `level_permission` (`level_id`, `permission`) SELECT "..tonumber(newLevelId).." AS `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(levelId).." EXCEPT SELECT `level_id`, `permission` FROM `level_permission` WHERE `level_id`="..tonumber(newLevelId)))
 end
 
 function sqlite3.removeLevelPermissions(levelId)
@@ -311,6 +311,15 @@ function sqlite3.getAliasByNicknameCount(nickname)
     return count
 end
 
+function sqlite3.getMostUsedAlias(playerid)
+    cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `used` DESC LIMIT 1"))
+
+    local alias = cur:fetch({}, "a")
+    cur:close()
+
+    return alias
+end
+
 function sqlite3.getLastAlias(playerid)
     cur = assert(con:execute("SELECT * FROM `alias` WHERE `player_id`="..tonumber(playerid).." ORDER BY `lastused` DESC LIMIT 1"))
     
@@ -375,6 +384,9 @@ function sqlite3.removeMute(muteId)
     cur = assert(con:execute("DELETE FROM `mute` WHERE `id`="..tonumber(muteId)..""))
 end
 
+function sqlite3.removeExpiredMutes()
+    cur = assert(con:execute("DELETE FROM `mute` WHERE `expires`<="..os.time()))
+end
 function sqlite3.getMutesCount()
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `mute`"))
 
@@ -430,6 +442,9 @@ function sqlite3.removeBan(banId)
     cur = assert(con:execute("DELETE FROM `ban` WHERE `id`="..tonumber(banId)..""))
 end
 
+function sqlite3.removeExpiredBans()
+    cur = assert(con:execute("DELETE FROM `ban` WHERE `expires`<="..os.time()))
+end
 function sqlite3.getBansCount()
     cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `ban`"))
 

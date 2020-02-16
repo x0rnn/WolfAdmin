@@ -15,25 +15,28 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local toml = require "toml"
-local events = require (wolfa_getLuaPath()..".util.events")
+local toml = wolfa_requireLib("toml")
+local events = wolfa_requireModule("util.events")
 
 local settings = {}
 
 local data = {
     ["g_logChat"] = "chat.log",
     ["g_logAdmin"] = "admin.log",
+    ["g_fileBanners"] = "banners.toml",
     ["g_fileGreetings"] = "greetings.toml",
     ["g_fileRules"] = "rules.toml",
     ["g_fileSprees"] = "sprees.toml",
     ["g_playerHistory"] = 1,
     ["g_spreeMessages"] = 7,
+    ["g_spreeSounds"] = 3,
     ["g_spreeRecords"] = 1,
     ["g_botRecords"] = 1,
     ["g_announceRevives"] = 1,
     ["g_greetingArea"] = 3,
     ["g_botGreetings"] = 1,
-    ["g_welcomeMessage"] = "^dwolfadmin: ^9This server is running WolfAdmin, type ^7/wolfadmin ^9for more information.",
+    ["g_bannerInterval"] = 120,
+    ["g_bannerRandomize"] = 1,
     ["g_welcomeArea"] = 3,
     ["g_evenerMinDifference"] = 2,
     ["g_evenerMaxDifference"] = 5,
@@ -94,7 +97,9 @@ local cfgStructure = {
         ["restricted"] = "g_restrictedVotes"
     },
     ["banners"] = {
-        ["welcome"] = "g_welcomeMessage",
+        ["file"] = "g_fileBanners",
+        ["interval"] = "g_bannerInterval",
+        ["random"] = "g_bannerRandomize",
         ["area"] = "g_welcomeArea"
     },
     ["rules"] = {
@@ -111,6 +116,7 @@ local cfgStructure = {
     ["sprees"] = {
         ["file"] = "g_fileSprees",
         ["messages"] = "g_spreeMessages",
+        ["sounds"] = "g_spreeSounds",
         ["records"] = "g_spreeRecords"
     }
 }
@@ -145,7 +151,7 @@ function settings.load()
         local fileTable = toml.parse(fileString)
         for module, settings in pairs(fileTable) do
             for setting, value in pairs(settings) do
-                if cfgStructure[module][setting] then
+                if cfgStructure[module] and cfgStructure[module][setting] then
                     data[cfgStructure[module][setting]] = value
                 end
             end
@@ -159,7 +165,7 @@ function settings.load()
         -- compatibility for 1.1.* and lower
         outputDebug("Using .cfg files is deprecated as of 1.2.0. Please consider updating to .toml files.", 3)
 
-        local files = require (wolfa_getLuaPath()..".util.files")
+        local files = wolfa_requireModule("util.files")
         local _, array = files.loadFromCFG("wolfadmin.cfg", "[a-z]+")
 
         for blocksname, settings in pairs(array) do
@@ -210,15 +216,16 @@ function settings.determineOS()
 end
 
 function settings.determineMode()
+    settings.set("fs_game", et.trap_Cvar_Get("fs_game"))
+
     -- mode has been manually specified
     if settings.get("g_standalone") then
         return
     end
 
-    local mod = et.trap_Cvar_Get("fs_game")
     local shrubbot = et.trap_Cvar_Get("g_shrubbot") -- etpub, nq
     local dbDir = et.trap_Cvar_Get("g_dbDirectory") -- silent
-    if mod == "legacy" or mod == "etpro" then
+    if settings.get("fs_game") == "legacy" or settings.get("fs_game") == "etpro" then
         settings.set("g_standalone", 1)
     elseif (not shrubbot or shrubbot == "") and (not dbDir or dbDir == "") then
         settings.set("g_standalone", 1)

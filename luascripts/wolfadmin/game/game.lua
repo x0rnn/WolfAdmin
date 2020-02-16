@@ -15,11 +15,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local util = require (wolfa_getLuaPath()..".util.util")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
+local util = wolfa_requireModule("util.util")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
 local game = {}
 
@@ -107,12 +107,5 @@ function game.onrevive(clientMedic, clientVictim)
     end
 end
 events.handle("onPlayerRevive", game.onrevive)
-
-function game.onready(clientId, firstTime)
-    if firstTime and settings.get("g_welcomeMessage") ~= "" then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat "..clientId.." \""..settings.get("g_welcomeMessage").."\";")
-    end
-end
-events.handle("onPlayerReady", game.onready)
 
 return game

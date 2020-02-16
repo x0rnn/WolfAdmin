@@ -15,9 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local commands = require (wolfa_getLuaPath()..".commands.commands")
-local auth = require (wolfa_getLuaPath()..".auth.auth")
-local balancer = require (wolfa_getLuaPath()..".admin.balancer")
+local auth = wolfa_requireModule("auth.auth")
+
+local balancer = wolfa_requireModule("admin.balancer")
+
+local commands = wolfa_requireModule("commands.commands")
+
+local settings = wolfa_requireModule("util.settings")
 
 function commandBalance(clientId, command, action)
     if action == "enable" then
@@ -42,10 +46,8 @@ function commandBalance(clientId, command, action)
         balancer.balance(true, false)
     else
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^dbalance usage: "..commands.getadmin("balance")["syntax"].."\";")
-
-        return true
     end
 
     return true
 end
-commands.addadmin("balance", commandBalance, auth.PERM_BALANCE, "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^henable|disable|force^9)")
+commands.addadmin("balance", commandBalance, auth.PERM_BALANCE, "either asks the players to even up or evens them by moving or shuffling players", "^2!balance ^9(^henable|disable|force^9)", nil, (settings.get("fs_game") == "etpub"))

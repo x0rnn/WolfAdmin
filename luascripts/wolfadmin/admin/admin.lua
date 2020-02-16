@@ -15,13 +15,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-local db = require (wolfa_getLuaPath()..".db.db")
+local db = wolfa_requireModule("db.db")
 
-local players = require (wolfa_getLuaPath()..".players.players")
+local players = wolfa_requireModule("players.players")
 
-local events = require (wolfa_getLuaPath()..".util.events")
-local settings = require (wolfa_getLuaPath()..".util.settings")
-local util = require (wolfa_getLuaPath()..".util.util")
+local events = wolfa_requireModule("util.events")
+local settings = wolfa_requireModule("util.settings")
+local util = wolfa_requireModule("util.util")
 
 local admin = {}
 
@@ -60,8 +60,8 @@ function admin.onClientConnectAttempt(clientId, firstTime, isBot)
     if firstTime and db.isConnected() then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
 
-        if guid == "" or guid == "NO_GUID" or guid == "unknown" then
-            return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, enable ^7PunkBuster ^9(use ^7\\pb_cl_enable^9) ^9and/or create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
+        if string.len(guid) < 32 then
+            return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
 
         if settings.get("g_standalone") ~= 0 then
@@ -106,25 +106,25 @@ events.handle("onClientDisconnect", admin.onClientDisconnect)
 
 function admin.onClientNameChange(clientId, oldName, newName)
     -- rename filter
-    if not playerRenames[clientId] or playerRenames[clientId]["last"] < os.time() - 60 then
-        playerRenames[clientId] = {
-            ["first"] = os.time(),
-            ["last"] = os.time(),
-            ["count"] = 1
-        }
-    else
-        playerRenames[clientId]["count"] = playerRenames[clientId]["count"] + 1
-        playerRenames[clientId]["last"] = os.time()
-
-        -- give them some time
-        if (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) > 3 then
-            local renamesPerMinute = playerRenames[clientId]["count"] / (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) * 60
-
-            if renamesPerMinute > settings.get("g_renameLimit") then
-                admin.kickPlayer(clientId, -1337, "Too many name changes.")
-            end
-        end
-    end
+--    if not playerRenames[clientId] or playerRenames[clientId]["last"] < os.time() - 60 then
+--        playerRenames[clientId] = {
+--            ["first"] = os.time(),
+--            ["last"] = os.time(),
+--            ["count"] = 1
+--        }
+--    else
+--        playerRenames[clientId]["count"] = playerRenames[clientId]["count"] + 1
+--        playerRenames[clientId]["last"] = os.time()
+--
+--       -- give them some time
+--        if (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) > 3 then
+--            local renamesPerMinute = playerRenames[clientId]["count"] / (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) * 60
+--
+--            if renamesPerMinute > settings.get("g_renameLimit") then
+--                admin.kickPlayer(clientId, -1337, "Too many name changes.")
+--            end
+--        end
+--    end
 
     -- on some mods, this message is already printed
     -- known: old NQ versions, Legacy
