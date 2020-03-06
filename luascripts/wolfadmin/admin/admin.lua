@@ -100,7 +100,7 @@ function admin.onClientConnect(clientId, firstTime, isBot)
 			end
 		end
 -- IP bans end
-
+ 
         if player then
             local playerId = player["id"]
             local mute = db.getMuteByPlayer(playerId)
