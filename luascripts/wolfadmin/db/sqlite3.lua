@@ -366,8 +366,8 @@ function sqlite3.getHistory(playerId, limit, offset)
     return warns
 end
 
-function sqlite3.listHistory(offset)
-    limit = 30
+function sqlite3.listHistory(limit, offset)
+	limit = limit or 30
     offset = offset or 0
 
     cur = assert(con:execute("SELECT * FROM `history` LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
