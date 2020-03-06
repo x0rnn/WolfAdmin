@@ -366,6 +366,34 @@ function sqlite3.getHistory(playerId, limit, offset)
     return warns
 end
 
+function sqlite3.listHistory(offset)
+    limit = 30
+    offset = offset or 0
+
+    cur = assert(con:execute("SELECT * FROM `history` LIMIT "..tonumber(limit).." OFFSET "..tonumber(offset)))
+
+    local list = {}
+    local row = cur:fetch({}, "a")
+    
+    while row do
+        table.insert(list, tables.copy(row))
+        row = cur:fetch(row, "a")
+    end
+
+    cur:close()
+    
+    return list
+end
+
+function sqlite3.getHistoryTotalCount()
+    cur = assert(con:execute("SELECT COUNT(`id`) AS `count` FROM `history`"))
+
+    local count = tonumber(cur:fetch({}, "a")["count"])
+    cur:close()
+
+    return count
+end
+
 function sqlite3.getHistoryItem(historyId)
     cur = assert(con:execute("SELECT * FROM `history` WHERE `id`="..tonumber(historyId)..""))
     
@@ -493,7 +521,7 @@ end
 
 function sqlite3.getBanByIP(playerIP)
 
-	cur = assert(con:execute("SELECT `victim_id` FROM `ban` WHERE `victim_id` IN (SELECT `id` FROM `player` WHERE `ip`="..tonumber(playerIP).." AND `expires`>"..os.time()..") LIMIT 1"))
+	cur = assert(con:execute("SELECT `victim_id` FROM `ban` WHERE `victim_id` IN (SELECT `id` FROM `player` WHERE `ip`='"..playerIP.."' AND `expires`>"..os.time()..") LIMIT 1"))
 
     local ban = cur:fetch({}, "a")
     cur:close()

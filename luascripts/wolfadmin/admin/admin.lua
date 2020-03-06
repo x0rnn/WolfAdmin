@@ -73,6 +73,24 @@ function admin.onClientConnectAttempt(clientId, firstTime, isBot)
                     return "\n\nYou have been banned for "..ban["duration"].." seconds, Reason: "..ban["reason"]
                 end
             end
+
+			-- IP bans
+			if not isBot then
+				local ip = string.gsub(et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "ip"), ":%d*", "")
+				local name = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "name")
+				local IPban = db.getBanByIP(ip)
+
+				if IPban then
+					local BannedId = IPban["victim_id"]
+					local banned = db.getBanByPlayer(BannedId)
+
+					if banned then
+						db.addHistory(BannedId, 1, "LOG", os.time(), "Banned IP: "..ip.." tried to connect with a different nickname: "..name)
+						return "\n\nYou have been banned for "..banned["duration"].." seconds, Reason: "..banned["reason"]
+					end
+				end
+			end
+			-- IP bans end
         end
     end
 
@@ -84,22 +102,6 @@ function admin.onClientConnect(clientId, firstTime, isBot)
     if settings.get("g_standalone") ~= 0 and db.isConnected() then
         local guid = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "cl_guid")
         local player = db.getPlayer(guid)
-
--- IP bans
-		local ip = string.gsub(et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "ip"), ":%d*", "")
-        local name = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "name")
-		local IPban = sqlite3.getBanByIP(ip)
-
-		if IPban then
-			local BannedId = IPban["victim_id"]
-			local banned = db.getBanByPlayer(BannedId)
-
-			if banned then
-                return "\n\nYou have been banned for "..banned["duration"].." seconds, Reason: "..banned["reason"]
-				db.addHistory(BannedId, -1337, "LOG", os.time(), "Banned IP: "..ip.." tried to connect with a different nickname: "..name)
-			end
-		end
--- IP bans end
 
         if player then
             local playerId = player["id"]
