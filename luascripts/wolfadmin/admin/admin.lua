@@ -88,15 +88,15 @@ function admin.onClientConnect(clientId, firstTime, isBot)
 -- IP bans
 		local ip = string.gsub(et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "ip"), ":%d*", "")
         local name = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "name")
-
 		local IPban = sqlite3.getBanByIP(ip)
-			if IPban then
-				local BannedId = IPban["victim_id"]
-				local banned = db.getBanByPlayer(BannedId)
-				if banned then
-                    return "\n\nYou have been banned for "..banned["duration"].." seconds, Reason: "..banned["reason"]
-					db.addHistory(BannedId, -1337, "LOG", os.time(), "Banned IP: "..ip.." tried to connect with a different nickname: "..name)
-				end
+
+		if IPban then
+			local BannedId = IPban["victim_id"]
+			local banned = db.getBanByPlayer(BannedId)
+
+			if banned then
+                return "\n\nYou have been banned for "..banned["duration"].." seconds, Reason: "..banned["reason"]
+				db.addHistory(BannedId, -1337, "LOG", os.time(), "Banned IP: "..ip.." tried to connect with a different nickname: "..name)
 			end
 		end
 -- IP bans end
