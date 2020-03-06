@@ -92,5 +92,5 @@ function commandListPlayers(clientId, command)
 
     return true
 end
-commands.addadmin("listplayers", commandListPlayers, auth.PERM_LISTPLAYERS, "display a list of connected players, their slot numbers as well as their admin levels", nil, nil, (settings.get("g_standalone") == 0))
-commands.addadmin("list", commandListPlayers, auth.PERM_LISTPLAYERS, "display a list of connected players, their slot numbers as well as their admin levels", nil, nil, (settings.get("g_standalone") == 0))
+commands.addclient("listplayers", commandListPlayers, auth.PERM_LISTPLAYERS, "display a list of connected players, their slot numbers as well as their admin levels", nil, nil, (settings.get("g_standalone") == 0))
+commands.addclient("list", commandListPlayers, auth.PERM_LISTPLAYERS, "display a list of connected players, their slot numbers as well as their admin levels", nil, nil, (settings.get("g_standalone") == 0))
