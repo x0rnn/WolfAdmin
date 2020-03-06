@@ -70,4 +70,4 @@ function commandHelp(clientId, command, cmd)
     
     return false
 end
-commands.addclient("help", commandHelp, auth.PERM_HELP, "display commands available to you or help on a specific command", "^9(^hcommand^9)", (settings.get("g_standalone") == 0))
+commands.addclient("explain", commandHelp, auth.PERM_HELP, "display commands available to you or help on a specific command", "^9(^hcommand^9)", (settings.get("g_standalone") == 0))
