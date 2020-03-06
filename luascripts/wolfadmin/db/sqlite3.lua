@@ -491,6 +491,17 @@ function sqlite3.getBanByPlayer(playerId)
     return ban
 end
 
+function sqlite3.getBanByIP(playerIP)
+
+	cur = assert(con:execute("SELECT victim_id FROM `ban` WHERE `victim_id` IN (SELECT `id` FROM `player` WHERE `ip`="..tonumber(playerId).." AND `expires`>"..os.time()..") LIMIT 1"))
+
+    local ban = cur:fetch({}, "a")
+    cur:close()
+
+    return ban
+end
+
+
 -- maps
 function sqlite3.addMap(mapname, lastplayed)
     cur = assert(con:execute("INSERT INTO `map` (`name`, `lastplayed`) VALUES ('"..util.escape(mapname).."', "..tonumber(lastplayed)..")"))
