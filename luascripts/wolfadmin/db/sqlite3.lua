@@ -492,7 +492,7 @@ function sqlite3.getBanByPlayer(playerId)
 end
 
 function sqlite3.getBanByIP(playerIP)
- 
+
 	cur = assert(con:execute("SELECT `victim_id` FROM `ban` WHERE `victim_id` IN (SELECT `id` FROM `player` WHERE `ip`="..tonumber(playerIP).." AND `expires`>"..os.time()..") LIMIT 1"))
 
     local ban = cur:fetch({}, "a")
