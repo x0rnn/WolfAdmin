@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 -- and extended by EAGLE_CZ, www.teammuppet.com
 
 -- This program is free software: you can redistribute it and/or modify
@@ -67,10 +67,18 @@ function commandFreeze(clientId, command, victim)
 	
 		et.gentity_set(cmdClient,"freezed", 1)
 		et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dfreeze: ^7"..players.getName(cmdClient).." ^9was frozen.\";")
+		
+		if settings.get("g_playerHistory") ~= 0 then
+			history.add(cmdClient, clientId, "freeze", reason)
+		end
 	else
 		
 		et.gentity_set(cmdClient,"freezed", 0)
 		et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dfreeze: ^7"..players.getName(cmdClient).." ^9is no longer frozen.\";")
+		
+		if settings.get("g_playerHistory") ~= 0 then
+			history.add(cmdClient, clientId, "unfreeze", reason)
+		end
 	end
 
     return true

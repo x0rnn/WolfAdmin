@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ local auth = wolfa_requireModule("auth.auth")
 local commands = wolfa_requireModule("commands.commands")
 
 local players = wolfa_requireModule("players.players")
+
+local history = wolfa_requireModule("admin.history")
 
 local constants = wolfa_requireModule("util.constants")
 local settings = wolfa_requireModule("util.settings")
@@ -69,6 +71,10 @@ function commandGib(clientId, command, victim)
     -- MAX_GENTITIES      1 << GENTITYNUM_BITS    1024
     -- ENTITYNUM_WORLD    MAX_GENTITIES - 2       18
     et.G_Damage(cmdClient, 0, 1024, 500, 0, 0) -- MOD_UNKNOWN = 0
+
+    if settings.get("g_playerHistory") ~= 0 then
+        history.add(cmdClient, clientId, "gib", reason)
+    end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dgib: ^7"..players.getName(cmdClient).." ^9was gibbed.\";")
 
