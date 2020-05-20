@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # WolfAdmin module for Wolfenstein: Enemy Territory servers.
-# Copyright (C) 2015-2019 Timo 'Timothy' Smit
+# Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -82,7 +82,9 @@ install_db_mysql() {
 
 install_pk3() {
     echo -n 'zipping pk3...';
-    zip -r -q wolfadmin-$curr_version.pk3 pk3
+    pushd pk3
+    zip -r -q ../wolfadmin-$curr_version.pk3 .
+    popd
     echo 'done.'
     echo -n 'copying pk3...';
     cp wolfadmin-$curr_version.pk3 $fs_basepath/$fs_game

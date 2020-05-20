@@ -1,6 +1,7 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
+-- extended by EAGLE_CZ, www.teammuppet.com
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -92,8 +93,6 @@ function commandWarn(clientId, command, victim, ...)
     end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "ccp "..cmdClient.." \"^7You have been warned by "..players.getName(clientId)..": ^7"..reason..".\";")
---    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dwarn: ^7"..players.getName(cmdClient).." ^9has been warned.\";")
-
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/misc/referee.wav\";")
 
 	local warncount 

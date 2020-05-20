@@ -1,6 +1,7 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
+-- extended by EAGLE_CZ, www.teammuppet.com
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ function admin.onClientConnectAttempt(clientId, firstTime, isBot)
             return "\n\nIt appears you do not have a ^7GUID^9/^7etkey^9. In order to play on this server, create an ^7etkey^9.\n\nMore info: ^7www.etkey.org"
         end
 
-        if settings.get("g_standalone") ~= 0 then	
+        if settings.get("g_standalone") ~= 0 then
             local player = db.getPlayer(guid)
             if player then
                 local playerId = player["id"]
@@ -124,25 +125,25 @@ events.handle("onClientDisconnect", admin.onClientDisconnect)
 
 function admin.onClientNameChange(clientId, oldName, newName)
     -- rename filter
---    if not playerRenames[clientId] or playerRenames[clientId]["last"] < os.time() - 60 then
---        playerRenames[clientId] = {
---            ["first"] = os.time(),
---            ["last"] = os.time(),
---            ["count"] = 1
---        }
---    else
---        playerRenames[clientId]["count"] = playerRenames[clientId]["count"] + 1
---        playerRenames[clientId]["last"] = os.time()
---
---       -- give them some time
---        if (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) > 3 then
---            local renamesPerMinute = playerRenames[clientId]["count"] / (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) * 60
---
---            if renamesPerMinute > settings.get("g_renameLimit") then
---                admin.kickPlayer(clientId, -1337, "Too many name changes.")
---            end
---        end
---    end
+    if not playerRenames[clientId] or playerRenames[clientId]["last"] < os.time() - 60 then
+        playerRenames[clientId] = {
+            ["first"] = os.time(),
+            ["last"] = os.time(),
+            ["count"] = 1
+        }
+    else
+        playerRenames[clientId]["count"] = playerRenames[clientId]["count"] + 1
+        playerRenames[clientId]["last"] = os.time()
+
+        -- give them some time
+        if (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) > 3 then
+            local renamesPerMinute = playerRenames[clientId]["count"] / (playerRenames[clientId]["last"] - playerRenames[clientId]["first"]) * 60
+
+            if renamesPerMinute > settings.get("g_renameLimit") then
+                admin.kickPlayer(clientId, -1337, "Too many name changes.")
+            end
+        end
+    end
 
     -- on some mods, this message is already printed
     -- known: old NQ versions, Legacy

@@ -258,7 +258,6 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'novote');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'nocensor');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'nobalance');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'novotelimit');
-INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'noreason');
 
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'teamcmds');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (4, 'silentcmds');
@@ -278,6 +277,7 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listhistory
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listwarns');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listbans');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listaliases');
+INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'listusers');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'liststats');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'finger');
 
@@ -324,6 +324,7 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'news');
 
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'uptime');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'setlevel');
+INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'incognito');
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'readconfig');
 
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'noinactivity');
@@ -340,5 +341,5 @@ INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'silentcmds'
 INSERT INTO `level_permission`(`level_id`, `permission`) VALUES (5, 'spy');
 
 -- add console to players table
-INSERT INTO `player` (`id`, `guid`, `ip`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1');
+INSERT INTO `player` (`id`, `guid`, `ip`, `level_id`, `lastseen`, `seen`) VALUES (1, 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', '127.0.0.1', 5, 0, 0);
 INSERT INTO `alias` (`id`, `player_id`, `alias`, `cleanalias`, `lastused`, `used`) VALUES (1, 1, 'console', 'console', 0, 0);

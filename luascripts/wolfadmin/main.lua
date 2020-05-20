@@ -1,6 +1,6 @@
 
 -- WolfAdmin module for Wolfenstein: Enemy Territory servers.
--- Copyright (C) 2015-2019 Timo 'Timothy' Smit
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ local tables
 local timers
 local util
 
-local version = "1.2.1-dev"
-local release = "4 January 2019"
+local version = "1.2.1"
+local release = "14 April 2020"
 
 local basepath
 local homepath
@@ -147,17 +147,15 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "sets mod_wolfadmin "..wolfa_getVersion()..";")
 
     outputDebug("Module "..wolfa_getVersion().." ("..wolfa_getRelease()..") loaded successfully. Created by Timo 'Timothy' Smit.")
-
-    -- Legacy integration
-    if et.trap_Cvar_Get("fs_game") == "legacy" then
-        require("legacydb")
-    end
-
+    
     events.trigger("onGameInit", levelTime, randomSeed, (restartMap == 1))
 end
 
 function et_ShutdownGame(restartMap)
-    events.trigger("onGameShutdown", (restartMap == 1))
+    -- check whether the module has fully initialized
+    if events then
+        events.trigger("onGameShutdown", (restartMap == 1))
+    end
 end
 
 function et_ConsoleCommand(cmdText)
