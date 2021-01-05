@@ -51,6 +51,25 @@ function admin.kickPlayer(victimId, invokerId, reason)
 	
 end
 
+function admin.kickPlayerServerFull(victimId, invokerId)
+	
+	if tonumber(et.trap_Cvar_Get("g_AllowedToComeBack")) then
+			AllowedToComeBack = tonumber(et.trap_Cvar_Get("g_AllowedToComeBack"))
+	else
+			-- time in seconds 
+			AllowedToComeBack = 5
+	end
+
+    local victimPlayerId = db.getPlayer(players.getGUID(victimId))["id"]
+    local invokerPlayerId = db.getPlayer(players.getGUID(invokerId))["id"]
+
+	ban_desc = "You have been kicked, because server was full. Please try one of our other server or come back later."
+    db.addBan(victimPlayerId, invokerPlayerId, os.time(), AllowedToComeBack, ban_desc)
+
+    et.trap_DropClient(victimId, "You have been kicked, because server was full. Please try one of our other server or come back later.", 0)
+	
+end
+
 function admin.setPlayerLevel(clientId, level)
     local playerId = db.getPlayer(players.getGUID(clientId))["id"]
 
