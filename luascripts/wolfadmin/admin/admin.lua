@@ -92,10 +92,8 @@ function admin.onClientConnectAttempt(clientId, firstTime, isBot)
                 if ban then
                     return "\n\nYou have been banned for "..ban["duration"].." seconds, Reason: "..ban["reason"]
                 end
-            end
 
 			-- IP bans
-			if not isBot then
 				local ip = string.gsub(et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "ip"), ":%d*", "")
 				local name = et.Info_ValueForKey(et.trap_GetUserinfo(clientId), "name")
 				local IPban = db.getBanByIP(ip)
@@ -109,8 +107,9 @@ function admin.onClientConnectAttempt(clientId, firstTime, isBot)
 						return "\n\nYou have been banned for "..banned["duration"].." seconds, Reason: "..banned["reason"]
 					end
 				end
-			end
 			-- IP bans end
+
+            end
         end
     end
 
