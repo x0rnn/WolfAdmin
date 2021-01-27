@@ -21,9 +21,9 @@ local settings = wolfa_requireModule("util.settings")
 
 function commandShuffleSR(clientId, command)
     if settings.get("fs_game") == "legacy" then
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by Skill Rating.\";")
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by Skill Rating.\";")
     end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr")
