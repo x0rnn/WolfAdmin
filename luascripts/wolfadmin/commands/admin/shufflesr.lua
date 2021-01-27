@@ -20,10 +20,14 @@ local commands = wolfa_requireModule("commands.commands")
 local settings = wolfa_requireModule("util.settings")
 
 function commandShuffleSR(clientId, command)
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by Skill Rating.\";")
+    if settings.get("fs_game") == "legacy" then
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled.\";")
+    else
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
+    end
 
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr")
 
     return true
 end
-commands.addadmin("shufflesr", commandShuffleSR, auth.PERM_SHUFFLE, "shuffle the teams by Skill Rating to try and even them", nil, nil, (settings.get("fs_game") == "legacy"))
+commands.addadmin("shufflesr", commandShuffleSR, auth.PERM_SHUFFLE, "shuffle the teams by Skill Rating to try and even them", "^2!shuffle ^9", nil, (settings.get("g_standalone") == 0))
