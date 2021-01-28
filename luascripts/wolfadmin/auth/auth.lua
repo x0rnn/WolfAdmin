@@ -68,6 +68,8 @@ auth.PERM_GLOW = "glow"
 auth.PERM_PANTS = "pants"
 auth.PERM_POP = "pop"
 auth.PERM_NADE = "nade"
+auth.PERM_BEER = "beer"
+
 
 auth.PERM_WARN = "warn"
 auth.PERM_MUTE = "mute"
