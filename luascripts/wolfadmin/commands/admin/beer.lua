@@ -62,7 +62,7 @@ function commandBeer(clientId, command, victim)
 
     et.trap_FS_FCloseFile(fileDescriptor)
 	
-	et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^TM Pub: "..et.gentity_get(clientId, "pers.netname").."^7 buyed a can of beer to "..et.gentity_get(cmdClient, "pers.netname").." ^9Cheers!\";")
+	et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^7 TeamMuppet Pub: "..et.gentity_get(clientId, "pers.netname").."^7 buyed a can of beer to "..et.gentity_get(cmdClient, "pers.netname").." ^7Cheers!\";")
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/world/steam_03.wav\";")
 
     return true
