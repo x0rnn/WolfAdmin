@@ -26,7 +26,7 @@ function commandShuffleSR(clientId, command)
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by Skill Rating.\";")
     end
 
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr_norestart")
 
     return true
 end

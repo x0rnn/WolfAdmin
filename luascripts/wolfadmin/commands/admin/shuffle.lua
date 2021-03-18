@@ -23,9 +23,9 @@ function commandShuffle(clientId, command)
     if settings.get("fs_game") == "legacy" then
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled.\";")
     else
-        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by XP.\";")
+        et.trap_SendConsoleCommand(et.EXEC_APPEND, "cchat -1 \"^dshuffle: ^9teams were shuffled by SR.\";")
     end
-    et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams")
+    et.trap_SendConsoleCommand(et.EXEC_APPEND, "shuffle_teams_sr_norestart")
 
     return true
 end
