@@ -32,6 +32,7 @@ local stats = wolfa_requireModule("players.stats")
 
 local admin = wolfa_requireModule("admin.admin")
 
+--[[
 function commandWarn(clientId, command, victim, ...)
     local cmdClient
 
@@ -56,6 +57,7 @@ function commandWarn(clientId, command, victim, ...)
     return false
 end
 commands.addadmin("warn", commandWarn, auth.PERM_WARN, "warns a player by displaying the reason", "^9[^3name|slot#^9] ^9[^3reason^9]", true, (settings.get("g_standalone") ~= 0 or settings.get("g_playerHistory") == 0))
+--]]
 
 function commandWarn(clientId, command, victim, ...)
     local cmdClient

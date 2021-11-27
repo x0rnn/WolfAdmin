@@ -119,7 +119,9 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     db = wolfa_requireModule("db.db")
 
     commands = wolfa_requireModule("commands.commands")
-
+	
+	clantagprotect = wolfa_requireModule("admin.clantagprotect")
+	
     bots = wolfa_requireModule("game.bots")
     game = wolfa_requireModule("game.game")
     fireteams = wolfa_requireModule("game.fireteams")
