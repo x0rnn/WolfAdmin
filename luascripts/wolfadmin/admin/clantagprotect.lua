@@ -108,6 +108,6 @@ function clantagprotect.check()
 end
 	
 function clantagprotect.onGameInit(levelTime, randomSeed, restartMap)
-    clantagprotectTimer = timers.add(clantagprotect.check, 5000, 0)
+    clantagprotectTimer = timers.add(clantagprotect.check, 30000, 0)
 end
 events.handle("onGameInit", clantagprotect.onGameInit)
