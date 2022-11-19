@@ -34,8 +34,8 @@ local sprees = {}
 sprees.RECORD_BOTS_PLAYING = 1
 sprees.RECORD_BOTS = 2
 
-sprees.SOUND_PLAY_SELF = 0
-sprees.SOUND_PLAY_PUBLIC = 1
+sprees.SOUND_PLAY_SELF = 1
+sprees.SOUND_PLAY_PUBLIC = 2
 
 sprees.TYPE_KILL = 0
 sprees.TYPE_DEATH = 1
@@ -259,8 +259,7 @@ function sprees.onPlayerSpree(clientId, causeId, type)
         local maxSpreeMessage = spreeMessagesByType[type][#spreeMessagesByType[type]]
 
         if spreeMessage then
-            local msg = string.format("^1%s SPREE! ^*%s ^*%s ^d(^3%d ^d%ss in a row!)",
-                string.upper(spreeNames[type]),
+            local msg = string.format("^9%s ^9%s ^9(^3%d ^9%ss in a row!)",
                 players.getName(clientId),
                 spreeMessage["msg"],
                 currentSpree,
@@ -299,7 +298,7 @@ end
 function sprees.onPlayerSpreeEnd(clientId, causeId, type)
     if type == sprees.TYPE_DEATH then
         if sprees.isSpreeEnabled(type) and sprees.isPlayerOnSpree(clientId, sprees.TYPE_DEATH) then
-            local msg = string.format("^7%s^d was the first victim of ^7%s ^dafter ^3%d ^d%ss!",
+            local msg = string.format("^7%s^7 was the first victim of ^3%s ^7after ^4%d ^7%ss^9!",
                 players.getName(causeId),
                 players.getName(clientId),
                 playerSprees[clientId][sprees.TYPE_DEATH],
@@ -316,7 +315,7 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
                     local msg = ""
 
                     if clientId == causeId then
-                        msg = string.format("^7%s^d's spree (^3%d ^d%ss) was brought to an end by ^1himself^d!",
+                        msg = string.format("^7%s's ^9spree (^3%d ^9%ss) was brought to an end by ^1himself^9!",
                             players.getName(clientId),
                             playerSprees[clientId][i],
                             spreeNames[i])
@@ -324,17 +323,17 @@ function sprees.onPlayerSpreeEnd(clientId, causeId, type)
                         local prefix = ""
 
                         if et.gentity_get(clientId, "sess.sessionTeam") == et.gentity_get(causeId, "sess.sessionTeam") then
-                            prefix = "^1TEAMMATE "
+                            prefix = "^1SELFKILL "
                         end
 
-                        msg = string.format("^7%s^d's spree (^3%d ^d%ss) was brought to an end by %s^7%s^d!",
+                        msg = string.format("^7%s^9's spree (^3%d ^9%ss) was brought to an end by %s^7%s^9!",
                             players.getName(clientId),
                             playerSprees[clientId][i],
                             spreeNames[i],
                             prefix,
                             players.getName(causeId))
                     else
-                        msg = string.format("^7%s^d's spree (^3%d ^d%ss) was brought to an end.",
+                        msg = string.format("^7%s^9's spree (^3%d ^9%ss) was brought to an end.",
                             players.getName(clientId),
                             playerSprees[clientId][i],
                             spreeNames[i])

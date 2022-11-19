@@ -57,7 +57,7 @@ function commandServerFull(clientId, command, victim, ...)
         return true
     end
 
-    reason = "Server was full"
+    reason = "Server was full, Please try ETL2.teammuppet.com"
 
     if settings.get("g_playerHistory") ~= 0 then
         history.add(cmdClient, clientId, "serverfull", reason)
