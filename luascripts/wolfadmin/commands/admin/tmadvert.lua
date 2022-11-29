@@ -38,8 +38,15 @@ function tmforum()
     return true
 end
 
+function tmdiscord()
+    
+	message = "^3Any questions? Feel free to join our discord for latest server and map updates https://discord.teammuppet.com"
+	et.trap_SendServerCommand( -1 , string.format('%s \"%s\"',location,message ))
 
+    return true
+end
 
 commands.addadmin("join", jointm, auth.PERM_TMADVERT, "print message how to join TM", nil, nil, (settings.get("g_standalone") == 0))
 commands.addadmin("forum", tmforum, auth.PERM_TMADVERT, "print TM forum url", nil, nil, (settings.get("g_standalone") == 0))
 commands.addadmin("recruit", jointm, auth.PERM_TMADVERT, "print message how to join TM", nil, nil, (settings.get("g_standalone") == 0))
+commands.addadmin("discord", tmdiscord, auth.PERM_TMADVERT, "print TM discord url", nil, nil, (settings.get("g_standalone") == 0))
