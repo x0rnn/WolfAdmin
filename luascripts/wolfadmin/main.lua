@@ -51,8 +51,8 @@ local tables
 local timers
 local util
 
-local version = "1.2.1"
-local release = "14 April 2020"
+local version = "1.2.8"
+local release = "14 November 2022"
 
 local basepath
 local homepath
@@ -120,8 +120,6 @@ function et_InitGame(levelTime, randomSeed, restartMap)
 
     commands = wolfa_requireModule("commands.commands")
 	
-	clantagprotect = wolfa_requireModule("admin.clantagprotect")
-	
     bots = wolfa_requireModule("game.bots")
     game = wolfa_requireModule("game.game")
     fireteams = wolfa_requireModule("game.fireteams")
@@ -144,11 +142,16 @@ function et_InitGame(levelTime, randomSeed, restartMap)
     timers = wolfa_requireModule("util.timers")
     util = wolfa_requireModule("util.util")
 
+	-- TM specific
+	clantagprotect = wolfa_requireModule("admin.clantagprotect")
+	-- TM antispawnkill
+	antispawnkill = wolfa_requireModule("antispawnkill.antispawnkill")
+	
     -- register the module
     et.RegisterModname("WolfAdmin "..wolfa_getVersion())
     et.trap_SendConsoleCommand(et.EXEC_APPEND, "sets mod_wolfadmin "..wolfa_getVersion()..";")
 
-    outputDebug("Module "..wolfa_getVersion().." ("..wolfa_getRelease()..") loaded successfully. Created by Timo 'Timothy' Smit.")
+    outputDebug("Module "..wolfa_getVersion().." ("..wolfa_getRelease()..") loaded successfully. Created by Timo 'Timothy' Smit, extended by <=TM=>EAGLE_CZ")
     
     events.trigger("onGameInit", levelTime, randomSeed, (restartMap == 1))
 end
