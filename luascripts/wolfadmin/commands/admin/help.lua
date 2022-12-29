@@ -38,6 +38,8 @@ function commandHelp(clientId, command, cmd)
         
         local cmdsOnLine, cmdsBuffer = 0, ""
         
+		--[[
+		-- old style table view 
         for _, command in pairs(availableCommands) do
             cmdsBuffer = cmdsBuffer ~= "" and cmdsBuffer..string.format("%-15s", command) or string.format("%-15s", command)
             cmdsOnLine = cmdsOnLine + 1
@@ -52,7 +54,25 @@ function commandHelp(clientId, command, cmd)
         if cmdsBuffer ~= "" then
             et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..cmdsBuffer.."\";")
         end
+        ]]--
+		
+		-- new style by Eagle
+        for _, command in pairs(availableCommands) do
+            cmdsBuffer = cmdsBuffer ~= "" and cmdsBuffer..string.format("%-20s", command) or string.format("%-20s", command)
+            cmdsOnLine = cmdsOnLine + 1
+                
+            if cmdsOnLine == 6 then
+                et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..cmdsBuffer.."\";")
+                cmdsBuffer = ""
+                cmdsOnLine = 0
+            end
+        end
         
+        if cmdsBuffer ~= "" then
+            et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^f"..cmdsBuffer.."\";")
+        end
+		-- end of new style
+		
         et.trap_SendConsoleCommand(et.EXEC_APPEND, "csay "..clientId.." \"^9Type ^2!help ^d[command] ^9for help with a specific command.\";")
         
         return false

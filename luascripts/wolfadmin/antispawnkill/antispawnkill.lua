@@ -1,3 +1,22 @@
+-- Based on original Anti-Spawnkill module by DM hazz#4857
+-- WolfAdmin module for Wolfenstein: Enemy Territory servers.
+-- Copyright (C) 2015-2020 Timo 'Timothy' Smit
+-- extended by <=TM=>EAGLE_CZ, www.teammuppet.com
+
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- at your option any later version.
+
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 -- WolfAdmin definitions
 local auth = wolfa_requireModule("auth.auth")
 local history = wolfa_requireModule("admin.history")
@@ -25,13 +44,14 @@ local destroyTargets = {}
 local printDelay = 5000
 local printInitTime
 local printDone = false
+local warmup_desc = ""
 
 local antispawnkill = {}
 
--- handle g_antispawnkill setting from server.cfg
--- set g_antispawnkill = 0  - do nothing, only warn
--- set g_antispawnkill = 1  - ban the player
--- set g_antispawnkill = 2  - move to spec
+-- handle CVAR g_antispawnkill setting from server.cfg
+-- set g_antispawnkill = 0 - do nothing, warn only
+-- set g_antispawnkill = 1 - ban the player
+-- set g_antispawnkill = 2 - move to spec
 local antispawnkill_action = et.trap_Cvar_Get("g_antispawnkill")
 if tonumber(antispawnkill_action) == nil or tonumber(antispawnkill_action) == 0 then
 	et.G_Print("Anti-spawnkill: No action will be done with spawnkiller via set g_antispawnkill = 0 [1 = ban, 2 = spec]\n")
@@ -248,6 +268,7 @@ function isSpawnkill(target, meansOfDeath)
 end
 
 function warnSpawnkill(clientNum)
+
 	-- the below statement could be used to drop the offender out of their team
 	--+instead of gibbing or kicking
 	--et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam " .. clientNum .. " s;")
@@ -259,84 +280,82 @@ function warnSpawnkill(clientNum)
 	spawnkillWarnings[clientGuid]["warningCount"] = issuedWarnings
 	spawnkillWarnings[clientGuid]["lastWarning"] = getLeveltime()
 
-	if issuedWarnings > warningsBeforeKick then
-	
-	if string.len(et.trap_GetConfigstring(et.CS_WARMUP)) > 0 then
-		local warmup_desc = " (WARMUP) "
-	end
+	if not isWarmup() then
+
+		if issuedWarnings > warningsBeforeKick then
 		
-		if not isWarmup() then
+			--if not isWarmup() then
+					
+				-- what to do if someone is breaking the rule
 				
-			-- what to do if someone is breaking the rules
-			
-			-- g_antispawnkill 0 = nothing
-			if tonumber(antispawnkill_action) == 0 then
-				-- drop client
-				if settings.get("g_playerHistory") ~= 0 then
-					db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Continuously spawnkilled on map: "..string.lower(et.trap_Cvar_Get("mapname")).." - already warned " ..issuedWarnings.. " times.")
-				end
-			end
-			
-			-- g_antispawnkill 1 = ban
-			if tonumber(antispawnkill_action) == 1 then
-				-- drop client
-				if settings.get("g_playerHistory") ~= 0 then
-					db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Banned on map: "..string.lower(et.trap_Cvar_Get("mapname")).." - already warned " ..issuedWarnings.. " times.")
+				-- g_antispawnkill 0 = nothing
+				if tonumber(antispawnkill_action) == 0 then
+					-- drop client
+					if settings.get("g_playerHistory") ~= 0 then
+						db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Continuously spawnkilled on map: "..string.lower(et.trap_Cvar_Get("mapname")).." - already warned " ..issuedWarnings.. " times.")
+					end
 				end
 				
-				ban_desc = "You have been banned, due Anti-Spawnkill rule on map "..string.lower(et.trap_Cvar_Get("mapname")).."."
-				db.addBan(db.getPlayerId(clientNum), 1, os.time(), bantime, ban_desc)
-				et.trap_DropClient(clientNum, ban_desc, 0)
-			end
-			
-			if tonumber(antispawnkill_action) == 2 then
-				-- g_antispawnkill 2 = spec
-				-- move to spec
-				if settings.get("g_playerHistory") ~= 0 then
-					db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Moved to spectators on map: "..string.lower(et.trap_Cvar_Get("mapname")).." - already warned " ..issuedWarnings.. " times.")
+				-- g_antispawnkill 1 = ban
+				if tonumber(antispawnkill_action) == 1 then
+					-- drop client
+					if settings.get("g_playerHistory") ~= 0 then
+						db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Banned on map: "..string.lower(et.trap_Cvar_Get("mapname")).." - already warned " ..issuedWarnings.. " times.")
+					end
+					
+					ban_desc = "You have been banned, due Anti-Spawnkill rule on map "..string.lower(et.trap_Cvar_Get("mapname")).."."
+					db.addBan(db.getPlayerId(clientNum), 1, os.time(), bantime, ban_desc)
+					et.trap_DropClient(clientNum, ban_desc, 0)
 				end
-				et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam " .. clientNum .. " s;")
-			
-			end	
-						
-		else
-			et.trap_SendServerCommand(-1, "cpm \"^7Anti-spawnkill: " .. playerName ..
-			"^7 would be kicked if it wasn't warmup!\n\"")
-		end
-	
-	elseif issuedWarnings > warningsBeforeGib then
-		et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/misc/referee.wav\";")
-		et.trap_SendServerCommand(-1, "cpm \"^1Anti-Spawnkill: Warning ^7[" .. issuedWarnings .. "/" .. warningsBeforeKick .. "] " ..
-		playerName .. "^7: No heavy weapons in spawn!\n\"")
-
-		if warningsBeforeKick - issuedWarnings == 1 then
-			et.trap_SendServerCommand(clientNum, "bp \"^7Anti-Spawnkill: You were ^1GIBBED ^7because you dealt damage in a spawn area! " ..
-			warningsBeforeKick - issuedWarnings .. " warning left before kick.\n\"")
-			db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Warned on map: "..string.lower(et.trap_Cvar_Get("mapname"))..""..warmup_desc.." Count: " ..issuedWarnings.. " / "..warningsBeforeKick)
-		else
-			et.trap_SendServerCommand(clientNum, "bp \"^7Anti-Spawnkill: You were ^1GIBBED ^7because you dealt damage in a spawn area! " ..
-			warningsBeforeKick - issuedWarnings .. " warnings left before kick.\n\"")
-			db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Warned on map: "..string.lower(et.trap_Cvar_Get("mapname"))..""..warmup_desc.." Count: " ..issuedWarnings.. " / "..warningsBeforeKick)
-		end
-
-
-		et.G_Damage(clientNum, 0, 1022, 999, 0, 35)
-	else
-		et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/misc/referee.wav\";")
-		et.trap_SendServerCommand(-1, "cpm \"^1Anti-Spawnkill: Warning ^7[" .. issuedWarnings .. "/" .. warningsBeforeKick .. "] " ..
-		playerName .. "^7: No heavy weapons in spawn!\n\"")
+				
+				if tonumber(antispawnkill_action) == 2 then
+					-- g_antispawnkill 2 = spec
+					-- move to spec
+					if settings.get("g_playerHistory") ~= 0 then
+						db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Moved to spectators on map: "..string.lower(et.trap_Cvar_Get("mapname")).." - already warned " ..issuedWarnings.. " times.")
+					end
+					et.trap_SendConsoleCommand(et.EXEC_APPEND, "forceteam " .. clientNum .. " s;")
+				
+				end	
+							
+			--else
+			--	et.trap_SendServerCommand(-1, "cpm \"^7Anti-spawnkill: " .. playerName ..
+			--	"^7 would be kicked if it wasn't warmup!\n\"")
+			--end
 		
-		if warningsBeforeKick - issuedWarnings == 1 then
-			et.trap_SendServerCommand(clientNum, "bp \"^7Anti-Spawnkill: You were ^1WARNED ^7because you dealt damage in a spawn area! " ..
-			warningsBeforeKick - issuedWarnings .. " warning left before kick.\n\"")
-			db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Warned on map: "..string.lower(et.trap_Cvar_Get("mapname")).." "..warmup_desc.." Count: " ..issuedWarnings.. " / "..warningsBeforeKick)
+		elseif issuedWarnings > warningsBeforeGib then
+			et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/misc/referee.wav\";")
+			et.trap_SendServerCommand(-1, "cpm \"^1Anti-Spawnkill: Warning ^7[" .. issuedWarnings .. "/" .. warningsBeforeKick .. "] " ..
+			playerName .. "^7: No heavy weapons in spawn!\n\"")
+
+			if warningsBeforeKick - issuedWarnings == 1 then
+				et.trap_SendServerCommand(clientNum, "bp \"^7Anti-Spawnkill: You were ^1GIBBED ^7because you dealt damage in a spawn area! " ..
+				warningsBeforeKick - issuedWarnings .. " warning left before kick.\n\"")
+				db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Warned on map: "..string.lower(et.trap_Cvar_Get("mapname")).." Count: " ..issuedWarnings.. " / "..warningsBeforeKick)
+			else
+				et.trap_SendServerCommand(clientNum, "bp \"^7Anti-Spawnkill: You were ^1GIBBED ^7because you dealt damage in a spawn area! " ..
+				warningsBeforeKick - issuedWarnings .. " warnings left before kick.\n\"")
+				db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Warned on map: "..string.lower(et.trap_Cvar_Get("mapname")).." Count: " ..issuedWarnings.. " / "..warningsBeforeKick)
+			end
+
+
+			et.G_Damage(clientNum, 0, 1022, 999, 0, 35)
 		else
-			et.trap_SendServerCommand(clientNum, "bp \"^7Anti-Spawnkill: You were ^1WARNED ^7because you dealt damage in a spawn area! " ..
-			warningsBeforeKick - issuedWarnings .. " warnings left before kick.\n\"")
-			db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Warned on map: "..string.lower(et.trap_Cvar_Get("mapname")).." "..warmup_desc.." Count: " ..issuedWarnings.. " / "..warningsBeforeKick)
+			et.trap_SendConsoleCommand(et.EXEC_APPEND, "playsound \"sound/misc/referee.wav\";")
+			et.trap_SendServerCommand(-1, "cpm \"^1Anti-Spawnkill: Warning ^7[" .. issuedWarnings .. "/" .. warningsBeforeKick .. "] " ..
+			playerName .. "^7: No heavy weapons in spawn!\n\"")
+			
+			if warningsBeforeKick - issuedWarnings == 1 then
+				et.trap_SendServerCommand(clientNum, "bp \"^7Anti-Spawnkill: You were ^1WARNED ^7because you dealt damage in a spawn area! " ..
+				warningsBeforeKick - issuedWarnings .. " warning left before kick.\n\"")
+				db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Warned on map: "..string.lower(et.trap_Cvar_Get("mapname")).." Count: " ..issuedWarnings.. " / "..warningsBeforeKick)
+			else
+				et.trap_SendServerCommand(clientNum, "bp \"^7Anti-Spawnkill: You were ^1WARNED ^7because you dealt damage in a spawn area! " ..
+				warningsBeforeKick - issuedWarnings .. " warnings left before kick.\n\"")
+				db.addHistory(db.getPlayerId(clientNum), 1, "Anti-Spawnkill", os.time(), "Warned on map: "..string.lower(et.trap_Cvar_Get("mapname")).." Count: " ..issuedWarnings.. " / "..warningsBeforeKick)
+			end
 		end
 	end
-
 end
 
 function processSpawnkillers()
@@ -457,7 +476,9 @@ function antispawnkill.onGameFrame(levelTime)
 			processSpawnkillers()
 		end
 	end
+
 end
+-- WA events
 events.handle("onGameFrame", antispawnkill.onGameFrame)
 events.handle("onGameInit", antispawnkill.onGameInit)
 events.handle("onClientBegin", antispawnkill.onClientBegin)
